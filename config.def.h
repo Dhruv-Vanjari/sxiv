@@ -44,6 +44,11 @@ static const bool ANTI_ALIAS = true;
  */
 static const bool ALPHA_LAYER = false;
 
+enum {
+	FB_SVG_HEIGHT = 512,
+	FB_SVG_WIDTH  = 512
+};
+
 #endif
 #ifdef _THUMBS_CONFIG
 

@@ -27,6 +27,8 @@
 #include <Imlib2.h>
 #include <X11/Xlib.h>
 
+#include<librsvg/rsvg.h>
+
 /*
  * Annotation for functions called in cleanup().
  * These functions are not allowed to call error(!0, ...) or exit().
@@ -206,10 +208,18 @@ typedef struct {
 	int length;
 } multi_img_t;
 
+typedef struct {
+	RsvgHandle *h;
+	RsvgRectangle size;
+	RsvgRectangle viewbox;
+} svg_t;
+
 struct img {
 	Imlib_Image im;
 	int w;
 	int h;
+
+	svg_t svg;
 
 	win_t *win;
 	float x;
