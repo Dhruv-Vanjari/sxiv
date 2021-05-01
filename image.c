@@ -480,17 +480,20 @@ bool img_fit(img_t *img)
 	}
 	z = MIN(z, img->scalemode == SCALE_DOWN ? 1.0 : zoom_max);
 
-	if (zoomdiff(img, z) != 0) {
-		img->zoom = z;
-		img->dirty = true;
-		return true;
-	} else {
-		return false;
-	}
+	return img_zoom(img, z);
 }
 
 void img_render(img_t *img)
 {
+
+	float z;
+	if (img->svg.h) {
+		img->h = img->svg.viewbox.height;
+		img->w = img->svg.viewbox.width;
+		z = img->zoom;
+		img->zoom = 1.0;
+	}
+
 	win_t *win;
 	int sx, sy, sw, sh;
 	int dx, dy, dw, dh;
@@ -576,6 +579,12 @@ void img_render(img_t *img)
 		imlib_render_image_part_on_drawable_at_size(sx, sy, sw, sh, dx, dy, dw, dh);
 	}
 	img->dirty = false;
+
+	if (img->svg.h) {
+		img->h = img->svg.size.height;
+		img->w = img->svg.size.width;
+		img->zoom = z;
+	}
 }
 
 bool img_fit_win(img_t *img, scalemode_t sm)
@@ -610,6 +619,8 @@ bool img_zoom(img_t *img, float z)
 			x = img->win->w / 2;
 			y = img->win->h / 2;
 		}
+		if (img->svg.h)
+			img_load_svg(img, z);
 		img->x = x - (x - img->x) * z / img->zoom;
 		img->y = y - (y - img->y) * z / img->zoom;
 		img->zoom = z;
